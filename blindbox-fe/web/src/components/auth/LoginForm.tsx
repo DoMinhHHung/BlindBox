@@ -5,6 +5,7 @@ import Input from "../ui/Input";
 import Button from "../ui/Button";
 import { apiService } from "../../services/api";
 import LoadingTruck from "../ui/LoadingTruck";
+import Notification from "../ui/Notification";
 
 interface LoginFormProps {
   onToggleForm: () => void;
@@ -26,6 +27,10 @@ const LoginForm: React.FC<LoginFormProps> = ({
     password: "",
     form: "",
   });
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error" | "info";
+  } | null>(null);
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -47,13 +52,14 @@ const LoginForm: React.FC<LoginFormProps> = ({
       setLoading(true);
       try {
         await apiService.login(identifier, password);
+        setNotification({ message: "Login successful!", type: "success" });
         // TODO: Redirect to dashboard or homepage
       } catch (error: any) {
         setLoginError(true);
-        setErrors((prev) => ({
-          ...prev,
-          form: error?.response?.data?.message || "Invalid credentials",
-        }));
+        setNotification({
+          message: error?.response?.data?.message || "Invalid credentials",
+          type: "error",
+        });
         setTimeout(() => setLoginError(false), 500);
       }
       setLoading(false);
@@ -80,6 +86,11 @@ const LoginForm: React.FC<LoginFormProps> = ({
         </h2>
         <p className="text-neutral-600 mt-2">Sign in to your account</p>
       </div>
+      <Notification
+        message={notification?.message || ""}
+        type={notification?.type}
+        onClose={() => setNotification(null)}
+      />
       <AnimatePresence mode="wait">
         {errors.form && (
           <motion.div

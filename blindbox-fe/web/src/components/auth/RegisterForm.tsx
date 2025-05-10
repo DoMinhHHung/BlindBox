@@ -17,6 +17,7 @@ import Button from "../ui/Button";
 import LoadingTruck from "../ui/LoadingTruck";
 import { validateEmail, validatePassword } from "../../lib/utils";
 import { apiService } from "../../services/api";
+import Notification from "../ui/Notification";
 
 interface RegisterFormProps {
   onToggleForm: () => void;
@@ -51,6 +52,10 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
   });
   const [otpCooldown, setOtpCooldown] = useState(0); // seconds
   const otpTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error" | "info";
+  } | null>(null);
 
   useEffect(() => {
     if (otpCooldown > 0) {
@@ -80,11 +85,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
       setOtpSent(true);
       setShowOtpInput(true);
       setOtpCooldown(300); // 5 phút
+      setNotification({ message: "OTP sent to your email", type: "success" });
     } catch (error: any) {
-      setErrors((prev) => ({
-        ...prev,
-        form: error?.response?.data?.message || "Failed to send OTP",
-      }));
+      setNotification({
+        message: error?.response?.data?.message || "Failed to send OTP",
+        type: "error",
+      });
     }
     setLoading(false);
   };
@@ -139,12 +145,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
         password,
         otp,
       });
+      setNotification({ message: "Registration successful!", type: "success" });
       // TODO: Redirect to login or dashboard
     } catch (error: any) {
-      setErrors((prev) => ({
-        ...prev,
-        form: error?.response?.data?.message || "Registration failed",
-      }));
+      setNotification({
+        message: error?.response?.data?.message || "Registration failed",
+        type: "error",
+      });
     }
     setLoading(false);
     setShowLoadingTruck(false);
@@ -167,6 +174,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
         </h2>
         <p className="text-sky-300 mt-2">Join our marketplace community</p>
       </div>
+      <Notification
+        message={notification?.message || ""}
+        type={notification?.type}
+        onClose={() => setNotification(null)}
+      />
       <AnimatePresence mode="wait">
         {errors.form && (
           <motion.div
@@ -215,13 +227,19 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
                 <LoadingTruck />
               </div>
             ) : (
-              <Button
+              <motion.button
                 type="button"
-                variant="ghost"
-                size="sm"
                 onClick={handleSendOtp}
                 disabled={loading || otpCooldown > 0}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                className={`px-3 py-1 rounded-md text-xs font-semibold bg-primary-600 text-white shadow transition-all duration-200
+                    hover:bg-primary-700 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary-400
+                    ${
+                      loading || otpCooldown > 0
+                        ? "opacity-60 cursor-not-allowed"
+                        : ""
+                    } absolute right-2 top-1/2 transform -translate-y-1/2`}
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.05 }}
               >
                 {otpCooldown > 0
                   ? `Resend OTP (${Math.floor(otpCooldown / 60)}:${(
@@ -230,7 +248,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
                       .toString()
                       .padStart(2, "0")})`
                   : "Send OTP"}
-              </Button>
+              </motion.button>
             ))
           }
         />
@@ -264,9 +282,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
         <AnimatePresence>
           {showOtpInput && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
+              className="mt-2"
             >
               <Input
                 label="OTP Code"
