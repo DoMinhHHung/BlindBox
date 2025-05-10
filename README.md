@@ -1,101 +1,87 @@
 # 📦 BlindBox E-commerce Platform
 
-**BlindBox** là nền tảng thương mại điện tử chuyên về bán hàng **BlindBox**, thời trang, giày dép, phụ kiện. Hệ thống được thiết kế theo kiến trúc **microservice hiện đại**, giúp dễ dàng mở rộng và bảo trì từng thành phần độc lập.
+BlindBox là nền tảng thương mại điện tử chuyên về bán BlindBox, quần áo, giày dép và các sản phẩm thời trang. Hệ thống được thiết kế theo kiến trúc microservice hiện đại, đảm bảo khả năng mở rộng và bảo trì dễ dàng.
 
----
+## 🚀 Tổng quan hệ thống
 
-## 🏗️ Kiến trúc tổng quan
+BlindBox được xây dựng với kiến trúc microservice, phân chia thành các dịch vụ độc lập có thể hoạt động và triển khai riêng biệt:
 
-Hệ thống được chia thành các microservice:
+- **Auth Service**: Quản lý xác thực người dùng (đăng ký, đăng nhập, quên mật khẩu)
+- **Product Service**: Quản lý sản phẩm và danh mục
+- **Order Service**: Quản lý đơn hàng và thanh toán
+- **Gateway**: API Gateway làm điểm truy cập trung tâm cho tất cả các dịch vụ
 
-- **Auth Service**: Xác thực người dùng, đăng ký, đăng nhập, OTP, quên mật khẩu
-- **Product Service**: Quản lý sản phẩm, danh mục, tồn kho
-- **Order Service**: Xử lý đơn hàng, thanh toán, lịch sử mua hàng
-- **User Service**: Quản lý thông tin cá nhân, địa chỉ, phân quyền
-- **Admin Service**: Dành riêng cho quản trị viên quản lý toàn hệ thống
-- **Gateway**: API Gateway làm điểm truy cập duy nhất cho tất cả dịch vụ
+## 🔐 Tính năng phân quyền
 
----
+### 👤 Đối với khách hàng
 
-## 👥 Phân quyền hệ thống
-
-| Vai trò        | Quyền truy cập                                                            |
-| -------------- | ------------------------------------------------------------------------- |
-| **Khách hàng** | Đăng ký, đăng nhập, mua BlindBox, theo dõi đơn hàng                       |
-| **Người bán**  | Quản lý sản phẩm, theo dõi đơn hàng, xem thống kê doanh thu               |
-| **Admin**      | Quản lý người dùng, danh mục, phê duyệt seller, xem báo cáo toàn hệ thống |
-
----
-
-## ✨ Tính năng theo vai trò
-
-### 🧑‍💼 Khách hàng
-
-- Đăng ký tài khoản với OTP qua email
+- Đăng ký tài khoản với xác thực OTP qua email
 - Đăng nhập bằng email hoặc số điện thoại
-- Quên mật khẩu với OTP
-- Xem danh sách sản phẩm, tìm kiếm theo từ khóa và danh mục
-- Mua hộp BlindBox, thanh toán đơn hàng
-- Theo dõi trạng thái đơn hàng
-- Xem lịch sử đơn hàng, sản phẩm đã nhận
+- Quên mật khẩu với xác thực OTP
+- Xem và tìm kiếm sản phẩm
+- Đặt hàng và thanh toán
+- Theo dõi đơn hàng
 
-### 🛍️ Người bán (Store/Seller)
+### 🛍️ Đối với cửa hàng
 
-- Quản lý sản phẩm: thêm, sửa, xóa
-- Quản lý tồn kho và giá bán
-- Theo dõi đơn hàng của cửa hàng
-- Xem thống kê doanh số theo ngày/tháng
+- Quản lý sản phẩm (thêm, sửa, xóa)
+- Quản lý tồn kho
+- Xử lý đơn hàng
+- Thống kê doanh số
 
-### 🛠️ Quản trị viên
+### 🛡️ Đối với quản trị viên
 
-- Quản lý người dùng và người bán
-- Quản lý và phân loại danh mục sản phẩm
-- Phê duyệt tài khoản người bán
-- Xem báo cáo doanh thu, lượng đơn hàng, thống kê người dùng
+- Quản lý người dùng và cửa hàng
+- Quản lý danh mục sản phẩm
+- Phê duyệt cửa hàng
+- Xem báo cáo toàn hệ thống
 
----
+## 📁 Cơ sở dữ liệu
 
-## 🧾 Cơ sở dữ liệu
+BlindBox sử dụng MongoDB Atlas làm hệ thống cơ sở dữ liệu chính. Các collection chính bao gồm:
 
-Hệ thống sử dụng **MongoDB Atlas** với các collection chính như sau:
+- **users**: Thông tin người dùng và quyền
+- **auths**: Thông tin xác thực và OTP
+- **products**: Dữ liệu sản phẩm
+- **orders**: Thông tin đơn hàng
+- **categories**: Danh mục sản phẩm
+- **store_profiles**: Thông tin cửa hàng
 
-- `users`: Thông tin người dùng, quyền hạn, xác thực OTP
-- `products`: Danh sách sản phẩm, tồn kho, giá, loại
-- `orders`: Thông tin đơn hàng, trạng thái, thanh toán
-- `categories`: Danh mục sản phẩm
-- `sellers`: Hồ sơ người bán, cửa hàng
-- `blindboxes`: Các hộp bí ẩn, tỷ lệ phần thưởng
-- `transactions`: Lịch sử thanh toán
-- `reports`: Tổng hợp báo cáo (dành cho admin)
+## 🔧 Features
 
----
+- 🚀 Server-side rendering
+- ⚡️ Hot Module Replacement (HMR)
+- 📦 Asset bundling and optimization
+- 🔄 Data loading and mutations
+- 🔒 TypeScript by default
+- 🎉 TailwindCSS for styling
 
-## 🔧 Giao tiếp giữa các dịch vụ
+Ứng dụng có thể được đóng gói bằng Docker và triển khai trên nhiều nền tảng:
 
-Các service giao tiếp với nhau thông qua:
+- AWS ECS
+- Google Cloud Run
+- Azure Container Apps
+- Digital Ocean App Platform
+- Fly.io
+- Railway
 
-- **HTTP REST API** (nội bộ)
-- **Message Queue** (ví dụ: RabbitMQ hoặc Kafka) để xử lý sự kiện như "mua hộp", "xác nhận đơn hàng", "cập nhật tồn kho"
+## 🎨 Styling
 
----
+Template sử dụng sẵn [Tailwind CSS](https://tailwindcss.com/) để bắt đầu nhanh chóng với UI hiện đại và dễ tuỳ biến. Bạn có thể thay thế hoặc kết hợp với framework CSS khác tùy ý.
 
-## ⚙️ Công nghệ sử dụng
+> 📖 [React Router docs](https://reactrouter.com/) — Tài liệu chính thức của React Router được dùng trong frontend.
 
-- **Ngôn ngữ**: JavaScript / TypeScript
-- **Backend**: Node.js + Express
-- **Cơ sở dữ liệu**: MongoDB Atlas
-- **Xác thực**: JWT, OTP qua Email
-- **API Gateway**: Express Gateway hoặc custom gateway
-- **Frontend** _(đang phát triển)_: React.js hoặc Vue.js (SPA, Tailwind CSS)
+## 📦 Công nghệ sử dụng
 
----
+- **Backend**: Node.js, Express
+- **Database**: MongoDB Atlas
+- **Authentication**: JWT, OTP qua Email
+- **Frontend** (đang phát triển): React + TailwindCSS
 
-## 📌 Giấy phép
+## 👤 Tác giả
 
-MIT License
+[Đỗ Minh Hùng](https://github.com/DoMinhHHung)
 
----
+## 🪪 License
 
-## ✍️ Tác giả
-
-[Đỗ Minh Hùng]
+MIT
