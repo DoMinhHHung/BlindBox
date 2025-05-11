@@ -6,6 +6,7 @@ import Button from "../ui/Button";
 import { apiService } from "../../services/api";
 import LoadingTruck from "../ui/LoadingTruck";
 import Notification from "../ui/Notification";
+import { useNavigate } from "react-router-dom";
 
 interface LoginFormProps {
   onToggleForm: () => void;
@@ -31,6 +32,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
     message: string;
     type: "success" | "error" | "info";
   } | null>(null);
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
@@ -39,11 +41,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
     // Validate form
     const newErrors = {
       identifier: !identifier ? "Email or phone is required" : "",
-      password: !password
-        ? "Password is required"
-        : password.length < 8
-        ? "Password must be at least 8 characters"
-        : "",
+      password: !password ? "Password is required" : "",
       form: "",
     };
     setErrors(newErrors);
@@ -51,9 +49,11 @@ const LoginForm: React.FC<LoginFormProps> = ({
     if (!newErrors.identifier && !newErrors.password) {
       setLoading(true);
       try {
-        await apiService.login(identifier, password);
+        const res = await apiService.login(identifier, password);
         setNotification({ message: "Login successful!", type: "success" });
-        // TODO: Redirect to dashboard or homepage
+        // Save user info for Navbar
+        localStorage.setItem("userData", JSON.stringify(res.user));
+        navigate("/");
       } catch (error: any) {
         setLoginError(true);
         setNotification({
