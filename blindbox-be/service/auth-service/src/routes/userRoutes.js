@@ -10,17 +10,21 @@ router.post("/login", userController.loginUser);
 router.post("/forgot-password", userController.forgotPassword);
 router.post("/reset-password", userController.resetPassword);
 router.post("/verify-account", userController.verifyAccount);
+router.post("/verify-token", userController.verifyToken);
 
 // Routes yêu cầu đăng nhập - tất cả user
 router.use(verifyToken);
 router.get("/profile", userController.getUserProfile);
 router.put("/profile", userController.updateUserProfile);
 router.put("/change-password", userController.changePassword);
+router.get("/addresses", userController.getUserAddresses);
+router.post("/addresses", userController.addUserAddress);
+router.put("/addresses/:id", userController.updateUserAddress);
+router.delete("/addresses/:id", userController.deleteUserAddress);
 
 // Routes dành cho seller và admin
 router.use("/seller", verifyToken, restrictTo("seller", "admin"));
 router.get("/seller/dashboard", userController.getSellerDashboard);
-router.post("/seller/products", userController.createSellerProduct);
 
 // Routes chỉ dành cho admin
 router.use("/admin", verifyToken, restrictTo("admin"));
